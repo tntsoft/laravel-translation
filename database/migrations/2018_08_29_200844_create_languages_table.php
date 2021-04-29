@@ -14,24 +14,24 @@ class CreateLanguagesTable extends Migration
      */
     public function up()
     {
-        Schema::connection(config('translation.database.connection'))
-            ->create(config('translation.database.languages_table'), function (Blueprint $table) {
-                $table->increments('id');
-                $table->string('name')->nullable();
-                $table->string('language');
-                $table->timestamps();
-            });
+		// create the table only if it doesn't exist
+		if(!Schema::connection(config('translation.database.connection'))->hasTable(config('translation.database.translations_table')))
+		{
+			Schema::connection(config('translation.database.connection'))->create(config('translation.database.languages_table'), function(Blueprint $table)
+				{
+					$table->increments('id');
+					$table->string('name')->nullable();
+					$table->string('language');
+					$table->timestamps();
+				});
 
-        $initialLanguages = array_unique([
-            config('app.fallback_locale'),
-            config('app.locale'),
-        ]);
+			$initialLanguages = array_unique([config('app.fallback_locale'), config('app.locale'),]);
 
-        foreach ($initialLanguages as $language) {
-            Language::firstOrCreate([
-                'language' => $language,
-            ]);
-        }
+			foreach($initialLanguages as $language)
+			{
+				Language::firstOrCreate(['language' => $language,]);
+			}
+		}
     }
 
     /**
@@ -41,7 +41,8 @@ class CreateLanguagesTable extends Migration
      */
     public function down()
     {
-        Schema::connection(config('translation.database.connection'))
-            ->dropIfExists(config('translation.database.languages_table'));
+    	// never drop the schema
+//        Schema::connection(config('translation.database.connection'))
+//            ->dropIfExists(config('translation.database.languages_table'));
     }
 }
