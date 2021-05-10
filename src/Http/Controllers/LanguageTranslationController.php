@@ -2,6 +2,7 @@
 
 namespace JoeDixon\Translation\Http\Controllers;
 
+use App\Events\UpdatedTranslations;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Collection;
@@ -56,8 +57,10 @@ class LanguageTranslationController extends Controller
         if ($request->filled('group')) {
             $namespace = $request->has('namespace') && $request->get('namespace') ? "{$request->get('namespace')}::" : '';
             $this->translation->addGroupTranslation($language, "{$namespace}{$request->get('group')}", $request->get('key'), $request->get('value') ?: '');
+			UpdatedTranslations::dispatch();
         } else {
             $this->translation->addSingleTranslation($language, 'single', $request->get('key'), $request->get('value') ?: '');
+			UpdatedTranslations::dispatch();
         }
 
         return redirect()
@@ -69,8 +72,10 @@ class LanguageTranslationController extends Controller
     {
         if (! Str::contains($request->get('group'), 'single')) {
             $this->translation->addGroupTranslation($language, $request->get('group'), $request->get('key'), $request->get('value') ?: '');
+			UpdatedTranslations::dispatch();
         } else {
             $this->translation->addSingleTranslation($language, $request->get('group'), $request->get('key'), $request->get('value') ?: '');
+			UpdatedTranslations::dispatch();
         }
 
         return ['success' => true];

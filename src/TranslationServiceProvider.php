@@ -82,6 +82,7 @@ class TranslationServiceProvider extends ServiceProvider
     private function publishConfiguration()
     {
         $this->publishes([
+            __DIR__.'/Events/UpdatedTranslations.php' => base_path('/app/Events/UpdatedTranslations.php'),
             __DIR__.'/../config/translation.php' => config_path('translation.php'),
         ], 'config');
     }

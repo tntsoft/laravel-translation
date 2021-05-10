@@ -2,6 +2,7 @@
 
 namespace JoeDixon\Translation\Http\Controllers;
 
+use App\Events\UpdatedTranslations;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use JoeDixon\Translation\Drivers\Translation;
@@ -30,6 +31,7 @@ class LanguageController extends Controller
 
     public function store(LanguageRequest $request)
     {
+    	UpdatedTranslations::dispatch();
         $this->translation->addLanguage($request->locale, $request->name);
 
         return redirect()
